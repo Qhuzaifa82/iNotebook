@@ -8,7 +8,7 @@ const connectToMongo = require('./db');
 console.log("📦 ENV MONGO_URI from index.js:", process.env.MONGO_URI); // Debug
 
 const app = express();
-const port = 5000;
+const port = process.env.PORT || 5000;
 
 connectToMongo();
 
