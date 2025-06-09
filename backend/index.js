@@ -1,26 +1,23 @@
-const connectToMongo = require('./db');
+require('dotenv').config({ path: __dirname + '/.env' }); // ✅ absolute path from current file location
+// ✅ Load .env first
+
 const express = require('express');
-var cors = require('cors')
+const cors = require('cors');
+const connectToMongo = require('./db');
+
+console.log("📦 ENV MONGO_URI from index.js:", process.env.MONGO_URI); // Debug
 
 const app = express();
 const port = 5000;
 
-connectToMongo(); 
+connectToMongo();
 
-
-
-
-app.use(cors())
-app.use(express.json())
+app.use(cors());
+app.use(express.json());
 
 // Available Routes
-
-
-app.use('/api/auth', require('./routes/auth'))
-app.use('/api/notes', require('./routes/notes'))
-
-
-
+app.use('/api/auth', require('./routes/auth'));
+app.use('/api/notes', require('./routes/notes'));
 
 app.get('/', (req, res) => {
   res.send('Hello World!');
