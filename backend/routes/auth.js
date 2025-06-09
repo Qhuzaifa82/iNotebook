@@ -11,25 +11,24 @@ var fetchuser = require('../middleware/fetchuser')
 const JWT_SECRET = 'huzaifaisagoodb$oy';
 
 // ROUTE:1 Create a User using: POST "/api/auth/createuser". Does not require login
-router.post('/createuser', [
-    body('name', 'Enter a valid Name').isLength({ min: 3 }),
-    body('email', 'Enter a valid Email').isEmail(),
-    body('password', 'Password at least 5 characters').isLength({ min: 5 })
-], async (req, res) => {
+router.post('/createuser', [], async (req, res) => {
+  let success = false;
+  console.log('🔍 Incoming user data:', req.body);
 
-    let success = false;
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    console.log('❌ Validation errors:', errors.array());
+    return res.status(400).json({ success, errors: errors.array() });
+  }
 
-    
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        return res.status(400).json({success, errors: errors.array() });
+  try {
+    let user = await User.findOne({ email: req.body.email });
+    if (user) {
+      return res.status(400).json({ success, error: "User already exists" });
     }
 
-    try {
-        let user = await User.findOne({ email: req.body.email });
-        if (user) {
-            return res.status(400).json({success, error: "Sorry, a user with this email already exists" });
-        }
+    // Continue...
+
 
         const salt = await bcrypt.genSalt(10);
         const secPass = await bcrypt.hash(req.body.password, salt);
@@ -58,9 +57,10 @@ router.post('/createuser', [
         });
 
     } catch (error) {
-        console.error("❌ Error saving user:", error);
-        res.status(500).json({ error: 'Internal server error' });
-    }
+  console.error("❌ Error saving user:", error.message, error.stack);
+  res.status(500).json({ success: false, error: 'Internal server error', message: error.message });
+}
+
 });
 
 

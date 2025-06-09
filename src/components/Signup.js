@@ -20,7 +20,8 @@ const Signup = (props) => {
         e.preventDefault();
         const { name, email, password } = credentials;
 
-        const response = await fetch("https://inotebook-backend-tyes.onrender.com/api/auth/createuser", {
+        const response = await fetch("http://localhost:5000/api/auth/createuser", {
+
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
